@@ -1,28 +1,25 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    store count: {{$store.state.count}}
+    <br>
+    <button @click="$store.commit('increment')">add</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
-</script>
+  name: "app",
+  mounted() {
+    window.addEventListener("storage", e => {
+      if (e.key !== "vuex") return;
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+      // exit if no change
+      if (e.newValue === JSON.stringify(this.$store.state)) return;
+
+      const persistedData = JSON.parse(e.newValue);
+
+      this.$store.commit("setAll", persistedData);
+    });
+  }
+};
+</script>
